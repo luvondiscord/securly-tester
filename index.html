@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Securly Tester</title>
+<link rel="icon" type="image/png" href="https://chrose.netlify.app/detail/insecurly/assets/icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: #b30000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: #8a0000;
+    padding: 50px 60px;
+    width: 420px;
+    border-radius: 6px;
+    box-shadow:
+        0 0 0 2px #600000,
+        0 15px 40px rgba(0,0,0,0.6);
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: #ffb3b3;
+    margin-bottom: 30px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 14px;
+    background: #5c0000;
+    border: 1px solid #3a0000;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+    margin-bottom: 12px;
+}
+
+input:focus {
+    border-color: #ff1a1a;
+    box-shadow: 0 0 6px rgba(255,0,0,0.7);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #ff1a1a;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #ff3333;
+}
+
+.status {
+    margin-top: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 20px;
+}
+
+.blocked {
+    color: #ff2e2e;
+}
+
+.allowed {
+    color: #00ff88;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="title">Securly URL Tester</div>
+    <div class="subtitle">by luv#0000</div>
+
+    <input id="emailInput" type="text" placeholder="STUDENT EMAIL HERE (or put input 0)">
+    <input id="urlInput" type="text" placeholder="URL HERE">
+
+    <button onclick="checkUrl()">Check</button>
+
+    <div id="status" class="status"></div>
+</div>
+
+<script>
+function checkUrl() {
+    const rawEmail = document.getElementById("emailInput").value.trim();
+    const email = rawEmail === "0" || rawEmail === "" ? "000@students.sd308.org" : rawEmail;
+    const url = document.getElementById("urlInput").value.trim();
+    const statusEl = document.getElementById("status");
+
+    if (!email) {
+        statusEl.innerText = "School email is required";
+        statusEl.className = "status blocked";
+        return;
+    }
+
+    if (!url) {
+        statusEl.innerText = "";
+        statusEl.className = "status";
+        return;
+    }
+
+    try {
+        const urlHost = new URL(url).hostname;
+
+        const securlyUrl =
+            "https://useast-www.securly.com/crextn/broker?useremail=" +
+            encodeURIComponent(email) +
+            "&reason=crextn&host=" +
+            urlHost +
+            "&url=" +
+            btoa(url) +
+            "&msg=&ver=2.97.13&cu=https://useast-www.securly.com/crextn&uf=1&cf=1&lat=34.5678910&lng=-98.7654321";
+
+        const proxiedUrl = "https://corsproxy.io/?" + encodeURIComponent(securlyUrl);
+
+        fetch(proxiedUrl)
+            .then(res => res.text())
+            .then(data => {
+                if (data.includes("DENY")) {
+                    statusEl.innerText = url + " is blocked by Securly";
+                    statusEl.className = "status blocked";
+                } else {
+                    statusEl.innerText = url + " is not blocked by Securly";
+                    statusEl.className = "status allowed";
+                }
+            })
+            .catch(() => {
+                statusEl.innerText = "Unable to check URL";
+                statusEl.className = "status blocked";
+            });
+
+    } catch {
+        statusEl.innerText = "Invalid URL format";
+        statusEl.className = "status blocked";
+    }
+}
+</script>
+
+</body>
+</html>
