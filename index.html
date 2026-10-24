@@ -102,8 +102,7 @@ button:hover {
 <div class="container">
     <div class="title">Securly URL Tester</div>
     <div class="subtitle">by luv#0000</div>
-
-    <input id="emailInput" type="text" placeholder="STUDENT EMAIL HERE (or put input 0)">
+    
     <input id="urlInput" type="text" placeholder="URL HERE">
 
     <button onclick="checkUrl()">Check</button>
@@ -114,7 +113,7 @@ button:hover {
 <script>
 function checkUrl() {
     const rawEmail = document.getElementById("emailInput").value.trim();
-    const email = rawEmail === "0" || rawEmail === "" ? "000@students.sd308.org" : rawEmail;
+    const email = "15002257@students.sd308.org"
     const url = document.getElementById("urlInput").value.trim();
     const statusEl = document.getElementById("status");
 
